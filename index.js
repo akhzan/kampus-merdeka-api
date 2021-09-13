@@ -9,27 +9,29 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 
+var pokemons = {}
+for (var index = 0; index < data.length; index++) {
+  pokemons[data[index].id] = data[index]
+}
+var pokemonsMapped = Object.values(pokemons)
+
 app.get('/', async (req, res) => {
-  var pokemons = {}
-  for (var index = 0; index < data.length; index++) {
-    pokemons[data[index].id] = data[index]
-  }
   return res.status(200).send({
-    data: Object.values(pokemons),
+    data: pokemonsMapped,
   })
 })
 
 app.post('/', async (req, res) => {
-  data.unshift(req.body)
+  pokemonsMapped.unshift(req.body)
   return res.status(200).send({
     message: 'Success',
   })
 })
 
 app.put('/:id', async (req, res) => {
-  for (var index = 0; index < data.length; index++) {
-    if (data[index].id.toString() === req.params.id) {
-      data[index].name = req.body.name
+  for (var index = 0; index < pokemonsMapped.length; index++) {
+    if (pokemonsMapped[index].id.toString() === req.params.id) {
+      pokemonsMapped[index].name = req.body.name
       break
     }
   }
@@ -40,13 +42,13 @@ app.put('/:id', async (req, res) => {
 
 app.delete('/:id', async (req, res) => {
   var idx = null
-  for (var index = 0; index < data.length; index++) {
-    if (data[index].id.toString() === req.params.id) {
+  for (var index = 0; index < pokemonsMapped.length; index++) {
+    if (pokemonsMapped[index].id.toString() === req.params.id) {
       idx = index
       break
     }
   }
-  data.splice(idx, 1)
+  pokemonsMapped.splice(idx, 1)
   return res.status(200).send({
     message: 'Success',
   })
